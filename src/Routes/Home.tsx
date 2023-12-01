@@ -7,6 +7,31 @@ import { useState } from "react";
 
 const offset = 6;
 
+const BoxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: {
+      delay: 0.3,
+      duration: 0.2,
+    },
+    type: "tween",
+  },
+};
+
+const InfoVariants = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 0.3,
+      duration: 0.2,
+    },
+  },
+};
+
 function Home() {
   const { data, isLoading } = useQuery<IGetMoivesResult>(
     ["movies", "nowPlaying"],
@@ -56,9 +81,18 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <Box
+                      // 부모의 variants는 자식에게 상속됨
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
-                    />
+                      variants={BoxVariants}
+                      whileHover="hover"
+                      initial="normal"
+                      transition={{ type: "tween" }}
+                    >
+                      <Info variants={InfoVariants}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
                   ))}
               </Row>
             </AnimatePresence>
@@ -134,4 +168,25 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-size: cover;
   /* background-position: center center; */
   height: 150px;
+
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
+`;
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
 `;
