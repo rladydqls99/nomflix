@@ -1,11 +1,41 @@
 import { useQuery } from "react-query";
-import { IGetMoivesResult, getMovies } from "../api";
-import styled from "styled-components";
-import { makeImagePath } from "../utilis";
-import { motion, AnimatePresence } from "framer-motion";
+import { IGetMoivesResult, getMovies } from "../../api";
+import { makeImagePath } from "../../utilis";
+import { AnimatePresence, useViewportScroll } from "framer-motion";
 import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Wrapper,
+  Loader,
+  Banner,
+  Title,
+  Overview,
+  Slider,
+  Row,
+  Box,
+  Info,
+  Overlay,
+  BigMovie,
+  BigCover,
+  BigTitle,
+  BigOverview,
+} from "./Styles";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const offset = 6;
+
+const rowVariants = {
+  hidden: {
+    // 윈도우의 width를 구하는 방법
+    x: window.innerWidth,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: {
+    x: -window.innerWidth,
+  },
+};
 
 const BoxVariants = {
   normal: {
@@ -33,6 +63,10 @@ const InfoVariants = {
 };
 
 function Home() {
+  const history = useHistory();
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+  const { scrollY } = useViewportScroll();
+
   const { data, isLoading } = useQuery<IGetMoivesResult>(
     ["movies", "nowPlaying"],
     getMovies
@@ -52,6 +86,13 @@ function Home() {
 
   const toggleLeaving = () => setLeaving(!leaving);
 
+  const onBoxClicked = (movieId: number) => {
+    history.push(`/movies/${movieId}`);
+  };
+  const onOverlayClick = () => history.push("/");
+  const clickedMovie =
+    bigMovieMatch?.params.movieId &&
+    data?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
   return (
     <Wrapper>
       {isLoading ? (
@@ -81,14 +122,16 @@ function Home() {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <Box
-                      // 부모의 variants는 자식에게 상속됨
+                      layoutId={movie.id + ""}
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
                       variants={BoxVariants}
                       whileHover="hover"
                       initial="normal"
                       transition={{ type: "tween" }}
+                      onClick={() => onBoxClicked(movie.id)}
                     >
+                      {/* 부모의 variants는 자식에게 상속됨 */}
                       <Info variants={InfoVariants}>
                         <h4>{movie.title}</h4>
                       </Info>
@@ -97,6 +140,36 @@ function Home() {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {bigMovieMatch ? (
+              <>
+                <Overlay
+                  onClick={onOverlayClick}
+                  exit={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                />
+                <BigMovie
+                  style={{ top: scrollY.get() + 100 }}
+                  layoutId={bigMovieMatch.params.movieId + ""}
+                >
+                  {clickedMovie && (
+                    <>
+                      <BigCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+                            clickedMovie.backdrop_path,
+                            "w500"
+                          )})`,
+                        }}
+                      />
+                      <BigTitle>{clickedMovie.title}</BigTitle>
+                      <BigOverview>{clickedMovie.overview}</BigOverview>
+                    </>
+                  )}
+                </BigMovie>
+              </>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
@@ -104,89 +177,3 @@ function Home() {
 }
 
 export default Home;
-const rowVariants = {
-  hidden: {
-    // 윈도우의 width를 구하는 방법
-    x: window.innerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.innerWidth,
-  },
-};
-
-const Wrapper = styled.div`
-  background-color: black;
-`;
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  padding: 60px;
-
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-`;
-const Title = styled.h2`
-  font-size: 68px;
-  margin-bottom: 20px;
-`;
-
-const Overview = styled.p`
-  font-size: 30px;
-  width: 50%;
-`;
-
-const Slider = styled.div`
-  position: relative;
-  top: -100px;
-`;
-
-const Row = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-  width: 100%;
-  position: absolute;
-`;
-
-const Box = styled(motion.div)<{ bgPhoto: string }>`
-  background-color: white;
-  background-image: url(${(props) => props.bgPhoto});
-  background-size: cover;
-  /* background-position: center center; */
-  height: 150px;
-
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
-`;
-const Info = styled(motion.div)`
-  padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
-
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-
-  h4 {
-    text-align: center;
-    font-size: 18px;
-  }
-`;

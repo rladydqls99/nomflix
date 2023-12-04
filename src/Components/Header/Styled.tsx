@@ -54,6 +54,7 @@ export const Search = styled.span`
   display: flex;
   align-items: center;
   position: relative;
+
   svg {
     height: 25px;
   }
