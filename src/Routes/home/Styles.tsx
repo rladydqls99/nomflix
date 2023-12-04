@@ -11,7 +11,7 @@ export const Loader = styled.div`
   align-items: center;
 `;
 
-export const Banner = styled.div<{ bgPhoto: string }>`
+export const Banner = styled.div<{ bgphoto: string }>`
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@ export const Banner = styled.div<{ bgPhoto: string }>`
   padding: 60px;
 
   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgPhoto});
+    url(${(props) => props.bgphoto});
   background-size: cover;
 `;
 export const Title = styled.h2`
@@ -31,48 +31,6 @@ export const Title = styled.h2`
 export const Overview = styled.p`
   font-size: 30px;
   width: 50%;
-`;
-
-export const Slider = styled.div`
-  position: relative;
-  top: -100px;
-`;
-
-export const Row = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-  width: 100%;
-  position: absolute;
-`;
-
-export const Box = styled(motion.div)<{ bgPhoto: string }>`
-  background-color: white;
-  background-image: url(${(props) => props.bgPhoto});
-  background-size: cover;
-  /* background-position: center center; */
-  height: 150px;
-
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
-`;
-export const Info = styled(motion.div)`
-  padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
-
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-
-  h4 {
-    text-align: center;
-    font-size: 18px;
-  }
 `;
 
 export const Overlay = styled(motion.div)`
