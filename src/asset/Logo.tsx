@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 const logoVariants = {
@@ -14,8 +15,13 @@ const logoVariants = {
 };
 
 function Logo() {
+  const history = useHistory();
+  const onClickLogo = () => {
+    history.push("/");
+  };
   return (
     <LogoImg
+      onClick={onClickLogo}
       variants={logoVariants}
       whileHover="active"
       initial="normal"

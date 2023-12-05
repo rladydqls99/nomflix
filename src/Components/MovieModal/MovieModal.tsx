@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useRouteMatch } from "react-router-dom";
 import { useViewportScroll } from "framer-motion";
 import { useHistory } from "react-router-dom";
-import { makeImagePath } from "../../utilis";
+import { StarRating, makeImagePath } from "../../utilis";
 import { IMovies } from "../../api";
 
 interface MovieModalProps {
@@ -17,7 +17,8 @@ const MovieModal: React.FC<MovieModalProps> = ({ data }) => {
 
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
-    data?.find((movie) => movie.id === +bigMovieMatch.params.movieId);
+    data?.find((movie) => movie.id === +bigMovieMatch?.params.movieId);
+
   return (
     <AnimatePresence>
       {bigMovieMatch ? (
@@ -42,7 +43,11 @@ const MovieModal: React.FC<MovieModalProps> = ({ data }) => {
                   }}
                 />
                 <BigTitle>{clickedMovie.title}</BigTitle>
-                <BigOverview>{clickedMovie.overview}</BigOverview>
+                <ExplainBox>
+                  {clickedMovie.release_date.split("-")[0]}
+                  {StarRating(clickedMovie.vote_average)}
+                  <BigOverview>{clickedMovie.overview}</BigOverview>
+                </ExplainBox>
               </>
             )}
           </BigMovie>
@@ -89,6 +94,8 @@ const BigTitle = styled.h3`
   position: relative;
   top: -60px;
 `;
+
+const ExplainBox = styled.div``;
 
 const BigOverview = styled.p`
   padding: 20px;

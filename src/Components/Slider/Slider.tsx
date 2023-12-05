@@ -1,6 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import styled from "styled-components";
-import { IMovies } from "../../api";
+import { IGetMoivesResult } from "../../api";
 import { makeImagePath } from "../../utilis";
 import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -42,7 +42,7 @@ const InfoVariants = {
   },
 };
 interface SliderProps {
-  data: IMovies[] | undefined;
+  data: IGetMoivesResult | undefined;
   index: number;
   offset: number;
   toggleLeaving: () => void;
@@ -57,7 +57,6 @@ const Slider: React.FC<SliderProps> = ({
   const onBoxClicked = (movieId: number) => {
     history.push(`/movies/${movieId}`);
   };
-
   return (
     <Container>
       {/* 컴포넌트가 render 되거나 destroy 될 떄 효과를 줌 */}
@@ -71,7 +70,7 @@ const Slider: React.FC<SliderProps> = ({
           transition={{ type: "tween", duration: 1 }}
         >
           {data &&
-            data
+            data.results
               .slice(1)
               .slice(offset * index, offset * index + offset)
               .map((movie) => (

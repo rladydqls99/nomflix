@@ -17,8 +17,6 @@ function Home() {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const increaseIndex = () => {
-    console.log("hi");
-    console.log(index);
     if (data) {
       if (leaving) return;
       toggleLeaving();
@@ -43,7 +41,7 @@ function Home() {
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider
-            data={data?.results}
+            data={data}
             index={index}
             offset={offset}
             toggleLeaving={toggleLeaving}

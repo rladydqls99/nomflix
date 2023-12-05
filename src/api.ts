@@ -19,11 +19,20 @@ export interface IMovies {
   title: string;
   overview: string;
   id: number;
+  release_date: string;
+  vote_average: number;
 }
 
 export const getMovies = async () => {
   const response = await axios.get(
-    `${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`
+    `${BASE_PATH}/movie/now_playing?language=ko&api_key=${API_KEY}`
+  );
+  return response.data;
+};
+
+export const getMovieDetail = async (movieId: number) => {
+  const response = await axios.get(
+    `https://api.themoviedb.org/3/movie/${movieId}?language=ko&api_key=${API_KEY}`
   );
   return response.data;
 };
